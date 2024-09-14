@@ -1,0 +1,2 @@
+# Exclude configuration files with sensitive information
+src/config.h
