@@ -7,6 +7,11 @@ import json
 import time
 import sys
 from light_control import*
+try:
+  import config
+except ImportError:
+  class config:  # type: ignore
+    CHECKWX_API_KEY = "your_api_key_here"
 
 
 
@@ -22,7 +27,7 @@ def AvWeather():
 
   i = 0
 
-  hdr = {"X-API-Key": "your_api_key_here"}
+  hdr = {"X-API-Key": getattr(config, "CHECKWX_API_KEY", "your_api_key_here")}
   r = requests.request("GET","https://api.checkwx.com/metar/"+ airports +"/decoded", headers=hdr)
 
   cyData = json.loads(r.text)['data']

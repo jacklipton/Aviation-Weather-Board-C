@@ -3,11 +3,18 @@ import webrepl
 import network
 import sys
 
+# Load configuration from config.py if present, else use safe defaults
+try:
+    import config
+except ImportError:
+    class config:  # type: ignore
+        WIFI_SSID = 'SSID'
+        WIFI_PASSWORD = 'PASSWORD'
+        WEBREPL_ENABLED = False
+
 def conNet():
-
-
-    ssid = 'SSID'
-    password = "PASSWORD"
+    ssid = getattr(config, 'WIFI_SSID', 'SSID')
+    password = getattr(config, 'WIFI_PASSWORD', 'PASSWORD')
 
     station = network.WLAN(network.STA_IF)
 
@@ -27,6 +34,10 @@ def conNet():
 
     print('Connection successful')
     print(station.ifconfig())
-    webrepl.start()
+    if getattr(config, 'WEBREPL_ENABLED', False):
+        try:
+            webrepl.start()
+        except Exception as e:
+            print('WebREPL start failed:', e)
     time.sleep(1)
     return True

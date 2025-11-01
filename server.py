@@ -2,6 +2,11 @@ import socket
 import time
 import AviationWeatherServer
 import light_control
+try:
+    import config
+except ImportError:
+    class config:  # type: ignore
+        REFRESH_MINUTES = 15
 
 def run_server():
     # Create a socket object
@@ -18,6 +23,7 @@ def run_server():
     status = True
 
     while True:
+        current_time = time.time()
         conn, addr = s.accept()
         print('Got a connection from %s' % str(addr))
         request = conn.recv(1024)
@@ -42,8 +48,9 @@ def run_server():
             light_control.turnOff()
 
         current_time = time.time()
-        if current_time - last_action_time >= 15 * 60 and status:  # 15 minutes in seconds
-            print('15 minutes have passed, performing action')
+        refresh_secs = int(getattr(config, 'REFRESH_MINUTES', 15)) * 60
+        if current_time - last_action_time >= refresh_secs and status:
+            print('{} minutes have passed, performing action'.format(int(getattr(config, 'REFRESH_MINUTES', 15))))
             # Add your action here
             AviationWeatherServer.AvWeather()
             last_action_time = current_time

@@ -1,1 +1,3 @@
-parse_metar.py
+.venv
+.micropythonrc
+config.py

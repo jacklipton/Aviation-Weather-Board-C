@@ -55,16 +55,71 @@ The board flashes either green or red when initially booted-up to indicate a suc
 
 Before you begin, ensure you have met the following requirements:
 
-* Create an account with CheckWX and obtain an Auth Key
-* Download the micropython firmware for your microcontroller and flash it
+* Create an account with CheckWX and obtain an API key
+* Download the MicroPython firmware for your microcontroller (ESP32 or ESP8266)
+* Install tooling (macOS):
 
-## Installation
+```bash
+python3 -m pip install --user esptool mpremote
+```
 
-Use a micropython IDE (such as UpyCraft) to upload the script. Ensure to call it in the ESP boot up script
+If your board does not appear under `/dev/tty.*`, install the appropriate USB-Serial driver (CP210x or CH34x).
+
+## Quick Start (Flash → Configure → Deploy → Monitor)
+
+This repo includes small helper scripts under `tools/` to make flashing and deploying easy.
+
+1) Flash MicroPython to the board
+
+```bash
+# ESP32 example
+tools/flash.sh esp32 ~/Downloads/esp32-[version].bin
+
+# ESP8266 example
+tools/flash.sh esp8266 ~/Downloads/esp8266-[version].bin
+```
+
+Notes:
+- Put the board in bootloader mode (ESP32: hold BOOT, tap EN/RST; ESP8266: often automatic or hold FLASH + RST).
+- If the script cannot auto-detect the port, pass it as the 3rd argument, e.g. `/dev/tty.usbserial-0001`.
+
+2) Create your configuration (writes `config.py`)
+
+```bash
+python3 tools/setup_config.py
+```
+
+You’ll be prompted for Wi‑Fi SSID/password, CheckWX API key, LED pin/count, and refresh minutes. The script writes `config.py` (ignored by Git). Optionally, it can push `config.py` to the device.
+
+3) Deploy project files to the board
+
+```bash
+tools/deploy.sh
+```
+
+This uploads `boot.py`, `connect_to_wifi.py`, `light_control.py`, `server.py`, `AviationWeatherServer.py`, and `config.py` to the device and resets it.
+
+4) Monitor logs / REPL
+
+```bash
+tools/repl.sh
+```
+
+You’ll see prints from `boot.py` and `server.py`. Use `Ctrl-]` to exit.
 
 ## Configuration
 
-Ensure in the script you add the name of your own wifi SSID and password at line 9 and 10 of connect_to_wifi.py. You can choose your own airports at line 28 by modifying the ICAO airport codes. Lastly, ensure you have added your API auth key.
+All runtime settings live in `config.py` (created by `tools/setup_config.py`). Template: `config_template.py`.
+
+Settings include:
+
+- `WIFI_SSID`, `WIFI_PASSWORD`
+- `CHECKWX_API_KEY`
+- `LED_PIN`, `LED_COUNT`
+- `REFRESH_MINUTES` (how often to refresh METARs)
+- `WEBREPL_ENABLED` (set True if you have enabled WebREPL via `webrepl_setup` on the device)
+
+Security: `config.py` is in `.gitignore` by default so your credentials are not committed.
 
 ## Contributing
 

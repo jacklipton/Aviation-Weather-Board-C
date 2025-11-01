@@ -1,10 +1,18 @@
 import machine, neopixel
+try:
+  import config
+except ImportError:
+  class config:  # type: ignore
+    LED_PIN = 14
+    LED_COUNT = 50
 
 
 
 def light_setup():
   global np
-  np = neopixel.NeoPixel(machine.Pin(14),50)
+  pin = getattr(config, 'LED_PIN', 14)
+  count = getattr(config, 'LED_COUNT', 50)
+  np = neopixel.NeoPixel(machine.Pin(pin), count)
 
 
 
