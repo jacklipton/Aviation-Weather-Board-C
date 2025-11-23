@@ -1,0 +1,39 @@
+menu "Aviation Weather Configuration"
+
+    config ESP_WIFI_SSID
+        string "WiFi SSID"
+        default "router, i hardly know her!"
+        help
+            SSID of the WiFi network to connect to.
+
+    config ESP_WIFI_PASSWORD
+        string "WiFi Password"
+        default "fourwordsalluppercase"
+        help
+            Password of the WiFi network.
+
+    config CHECKWX_API_KEY
+        string "CheckWX API Key"
+        default "e99ef131b8f04bc9853ddaed7f"
+        help
+            API Key for checkwx.com
+
+    config LED_GPIO
+        int "LED Strip GPIO"
+        default 14
+        help
+            GPIO number for the LED strip data line.
+
+    config LED_COUNT
+        int "LED Count"
+        default 50
+        help
+            Number of LEDs in the strip.
+
+    config REFRESH_MINUTES
+        int "Refresh Interval (Minutes)"
+        default 15
+        help
+            How often to update weather data.
+
+endmenu
