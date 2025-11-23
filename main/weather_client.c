@@ -8,7 +8,7 @@
 
 static const char *TAG = "weather_client";
 
-#define MAX_HTTP_OUTPUT_BUFFER 8192 
+#define MAX_HTTP_OUTPUT_BUFFER 20480 
 
 static int ltOrder[] = {14,41,44,8,21,7,19,26,35,17,31,48,32,38,36,4,1};
 
@@ -43,12 +43,19 @@ void weather_client_fetch_and_update(void)
     
     if (content_length >= MAX_HTTP_OUTPUT_BUFFER) {
         ESP_LOGE(TAG, "Content length too large: %d", content_length);
-        // Handle error or partial read
+        free(buffer);
+        esp_http_client_close(client);
+        esp_http_client_cleanup(client);
+        return;
     }
 
     // Read response
     while (1) {
-        read_len = esp_http_client_read_response(client, buffer + total_read_len, MAX_HTTP_OUTPUT_BUFFER - total_read_len);
+        int size_to_read = MAX_HTTP_OUTPUT_BUFFER - total_read_len - 1;
+        if (size_to_read <= 0) {
+            break;
+        }
+        read_len = esp_http_client_read_response(client, buffer + total_read_len, size_to_read);
         if (read_len <= 0) {
             if (esp_http_client_is_complete_data_received(client)) {
                 break;
@@ -57,9 +64,6 @@ void weather_client_fetch_and_update(void)
             break;
         }
         total_read_len += read_len;
-        if (total_read_len >= MAX_HTTP_OUTPUT_BUFFER - 1) {
-            break;
-        }
     }
     
     buffer[total_read_len] = 0; // Null terminate

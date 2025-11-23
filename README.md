@@ -18,6 +18,18 @@ This project has been converted from MicroPython to ESP-IDF (C/C++).
     *   Refresh Interval
     *   (Look under "Aviation Weather Configuration")
 
+## Configuration & Secrets
+
+The project configuration is stored in `sdkconfig`. This file is **ignored by git** because it contains sensitive information (WiFi credentials, API keys).
+
+*   **`sdkconfig`**: Generated build configuration (Ignored).
+*   **`sdkconfig.defaults`**: Default project configuration (Tracked). Use this to set non-sensitive defaults.
+*   **`.vscode/`**: VS Code workspace settings (Ignored). Contains local paths to ESP-IDF tools.
+
+To persist configuration changes without committing secrets:
+1.  Set your secrets in `menuconfig` (they go into `sdkconfig`).
+2.  If you change project-wide settings (e.g., stack size, partition table), manually add them to `sdkconfig.defaults`.
+
 ## Build and Flash
 
 1.  Build the project using the extension or `idf.py build`.
