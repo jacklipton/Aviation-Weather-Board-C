@@ -1,6 +1,6 @@
 # Aviation Weather Board (ESP-IDF)
 
-This project has converted this project [https://github.com/jacklipton/Aviation-weather-board] from MicroPython to ESP-IDF (C/C++).
+This project has converted this [project](https://github.com/jacklipton/Aviation-weather-board) from MicroPython to ESP-IDF (C/C++).
 
 ## Prerequisites
 
